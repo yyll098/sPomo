@@ -1,3 +1,6 @@
+# 我是二次开发仅仅为了适配FastKey，源代码完全属于https://github.com/Envl/sPomo/
+
+
 # sPomo, a small pomodoro for windows
 
 > 用 AutoHotKey 制作的简单番茄钟. 由于在电脑前用手机当番茄钟实在是不方便, 桌面软件也很重, 不如快捷键来得爽, 所以有了它
