@@ -1,7 +1,7 @@
-﻿#SingleInstance
+#SingleInstance
 #NoTrayIcon
 
- ;; Variables
+;; Variables
 AppRunning:=True
 PomoRunning:=False
 isOnTop:=True
@@ -12,13 +12,16 @@ relaxTime:=300000 ;;5min*60s*1000ms
 readingTime:=1200 ;;20min*60s
 eyeCareTime:=20000 ;;20s*1000ms
 yPos:=A_ScreenHeight*0.85
+
 ;; Register Windows Events
 OnMessage(0x200,"WM_MOUSEMOVE")
 OnMessage(0x201, "WM_LBUTTONDOWN")
 OnMessage(0x202, "WM_LBUTTONUP")
 OnMessage(0x204, "WM_RBUTTONDOWN")
+
 ;; Monitor tasks
 SetTimer, CheckFullScrn, 3000    ; Periodically check Fullscreen application
+
 ;; GUI
 Gui ,sPomo:+LastFound +AlwaysOnTop 
 Gui, sPomo:-Caption +Owner -SysMenu
@@ -27,6 +30,7 @@ Gui, sPomo:Color,000000
 WinSet, Transparent, 210
 Gui, sPomo:Add, Text, xp-15 yp+7 cWhite vPomoStatus,任何时候连续按下  `;;pom  开/关番茄钟      or      连续按下  `;;eye  开/关20-20-20护眼模式
 Gui, sPomo:Show,NoActivate center,sPomodoro
+
 ;; for EyeCare relax only
 Gui ,eyeCare:+LastFound +AlwaysOnTop 
 Gui, eyeCare:-Caption +Owner -SysMenu
@@ -37,15 +41,15 @@ xx:=A_ScreenWidth/3
 Gui, eyeCare: Add,Text,cWhite w%A_ScreenWidth% x%xx%, 快眺望远方的山峰,别错过转弯的路口
 Gui,eyeCare:Show,NoActivate center, eyeRelax
 WinHide,eyeRelax
-; WinHide,eyeRelax
+
 ;; Righ Click Menu
 Menu, rMenu, Add, Exit, CloseApp
 Menu, rMenu, Add  ; Add a separator line.
 Menu, rMenu, Add, sPomo by @GnimOay, rMenuHandler
+
 ;; Tray Menu
 Menu,Tray,Add
 Menu,Tray,Add,Heyyyy,ClosePomo
-
 
 :*:;;pom::
     isPomo:=True
@@ -98,13 +102,11 @@ TickTick:
     timeLeft:=totalTime-timeElapsed
     min:=Format("{:02i}",Floor(timeLeft/60))
     sec:=Format("{:02i}",Floor(timeLeft-min*60))
-    ; energy:=1-timeElapsed/()
     if(energy<=0 or min<0){
         SetTimer, TickTick, Off
         SoundPlay, end.mp3
         Goto, Relax
     }
-    ; display:=energy*10
     display= %min%`:%sec%
     GuiControl,sPomo:Text,PomoStatus,%display%
     GuiControl,sPomo:Move,PomoStatus,x18
@@ -131,7 +133,6 @@ ClosePomo:
     face:=isPomo?"(╯°Д° ) ╯ ┻━┻":"护眼:关"
     GuiControl,sPomo:,PomoStatus,%face%
     Goto, CloseBeep
-    ; Gui,sPomo:Destroy
 Return
 
 CloseBeep:
@@ -141,11 +142,8 @@ Return
 CloseApp:
     ExitApp
 
-
 rMenuHandler:
-; Tooltip, You selected %A_ThisMenuItem% from the menu %A_ThisMenu%.
 return
-
 
 WM_MOUSEMOVE( wparam, lparam, msg, hwnd ){
     if wparam = 1 ; LButton
@@ -171,15 +169,11 @@ CheckFullScrn:
 Return
 
 isWindowFullScreen( winTitle ) {
-	;checks if the specified window is full screen
-	winID := WinExist( winTitle )
-	If ( !winID ){
-		Return false
+    winID := WinExist( winTitle )
+    If ( !winID ){
+        Return false
     }
-	WinGet style, Style, ahk_id %WinID%
-	WinGetPos ,,,winW,winH, %winTitle%
-	; 0x800000 is WS_BORDER.
-	; 0x20000000 is WS_MINIMIZE.
-	; no border and not minimized
-	Return ((style & 0x20800000) or winH < A_ScreenHeight or winW < A_ScreenWidth) ? false : true
+    WinGet style, Style, ahk_id %WinID%
+    WinGetPos ,,,winW,winH, %winTitle%
+    Return ((style & 0x20800000) or winH < A_ScreenHeight or winW < A_ScreenWidth) ? false : true
 }
